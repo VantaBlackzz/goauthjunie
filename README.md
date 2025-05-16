@@ -106,6 +106,68 @@ This provides an interactive documentation where you can:
 - See request and response schemas
 - Test the API directly from the browser
 
+## Profiling with pprof
+
+The application includes Go's built-in profiling tool, pprof, which helps analyze performance and identify bottlenecks.
+
+### Accessing pprof
+
+The pprof server runs on port 6060. You can access the various profiling endpoints:
+
+```
+http://localhost:6060/debug/pprof/
+```
+
+### Common pprof Commands
+
+You can use the Go pprof tool to analyze the profiles:
+
+#### CPU Profiling
+
+```bash
+# Collect a 30-second CPU profile
+go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+
+# Once in the pprof interactive console, you can use commands like:
+(pprof) top10      # Show top 10 functions by CPU usage
+(pprof) web        # Generate a graph visualization (requires graphviz)
+(pprof) list <func> # Show source code for a function with CPU usage
+```
+
+#### Memory Profiling
+
+```bash
+# Analyze heap allocations
+go tool pprof http://localhost:6060/debug/pprof/heap
+
+# Analyze memory allocations
+go tool pprof http://localhost:6060/debug/pprof/allocs
+```
+
+#### Goroutine Profiling
+
+```bash
+# Analyze goroutines
+go tool pprof http://localhost:6060/debug/pprof/goroutine
+```
+
+#### Block Profiling
+
+```bash
+# Analyze blocking operations
+go tool pprof http://localhost:6060/debug/pprof/block
+```
+
+### Visualizing Profiles in Browser
+
+You can also use the interactive web UI:
+
+```bash
+go tool pprof -http=:8081 http://localhost:6060/debug/pprof/profile
+```
+
+This will open a web browser with an interactive visualization of the profile.
+
 ## Security Considerations
 
 - The JWT secret key in the `.env` file should be changed in production

@@ -8,6 +8,8 @@ import (
 	"learn/internal/repository"
 	"learn/internal/service"
 	"log"
+	"net/http"
+	_ "net/http/pprof" // Import pprof for profiling
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -65,6 +67,12 @@ func main() {
 	// Swagger documentation
 	docs.SwaggerInfo.BasePath = "/"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Start pprof server on a separate port (6060 is the conventional port for pprof)
+	go func() {
+		log.Println("Starting pprof server on :6060")
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 
 	// Start server
 	log.Printf("Starting server on port %s", cfg.Server.Port)
